@@ -14,7 +14,7 @@ func NewUnauthorizedException(requestId string) *UnauthorizedException {
 		HttpError: HttpError{
 			Message: "Unauthorized",
 			RequestId: requestId,
-			Details: []ErrorDetail{{}},
+			Details: []ErrorDetail{},
 		},
 	}
 }
@@ -25,7 +25,7 @@ func ThrowUnauthorizedException(ctx *httpContext.CustomContext){
 		HttpError{
 			Message: "Unauthorized",
 			RequestId: ctx.GetRequestId(),
-			Details: []ErrorDetail{{}},
+			Details: []ErrorDetail{},
 		},
 	)
 }

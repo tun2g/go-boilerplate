@@ -1,14 +1,20 @@
 package exception
 
 import (
+	"fist-app/src/lib/logger"
 	httpContext "fist-app/src/shared/http-context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
+var _logger = logger.Logger()
+
 func ErrorHandler(ctx * httpContext.CustomContext){
 		ctx.Next()
+
+		_logger.Error(ctx.Errors)
+
 		if len(ctx.Errors) > 0 {
 			err := ctx.Errors[0].Err
 

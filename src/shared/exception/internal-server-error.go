@@ -9,7 +9,7 @@ func NewInternalServerError(requestId string) *InternalServerError{
 		HttpError: HttpError{
 			RequestId: requestId,
 			Message: "Internal Server Error Exception",
-			Details: []ErrorDetail{{}},
+			Details: []ErrorDetail{},
 		},
 	}
 }

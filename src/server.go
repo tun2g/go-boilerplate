@@ -3,6 +3,7 @@ package src
 import (
 	"context"
 	"fist-app/src/config"
+	logger "fist-app/src/lib/logger"
 	"fist-app/src/shared/cors"
 	"fist-app/src/shared/exception"
 	httpContext "fist-app/src/shared/http-context"
@@ -22,6 +23,9 @@ func NewServer(dbConnection *gorm.DB, config config.Config) (*Server, error) {
 	ctx := context.Background()
 
 	route := gin.Default()
+	
+	log := logger.Logger()
+	gin.DefaultWriter = log.Writer()
 	
 	route.Use(cors.CorsMiddleware())
 	

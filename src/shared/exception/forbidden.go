@@ -9,7 +9,7 @@ func NewForbiddenException(requestId string) *ForbiddenException{
 		HttpError: HttpError{
 			RequestId: requestId,
 			Message: "Forbidden",
-			Details: []ErrorDetail{{}},
+			Details: []ErrorDetail{},
 		},
 	}
 }
