@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"errors"
 	"fist-app/src/apis/model"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type usersRepository struct {
@@ -14,33 +15,28 @@ func NewUsersRepository(db *gorm.DB) UserRepository {
 	return usersRepository{storage: db}
 }
 
-func (repo usersRepository) FindUserByEmail(email string) (model.User, error) {
+func (repo usersRepository) FindUserByEmail(email string) (*model.User, error) {
 	var user model.User
-	err := repo.storage.Where("email = ?", email).Find(&user).Error
+	err := repo.storage.Where("email = ?", email).First(&user).Error
 
-	if err != nil {
-		return handleErr(err)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
 	}
 
-	return user, nil
+	return &user, nil
 }
 
-func (repo usersRepository) FindUserByID(id int) model.User {
+func (repo usersRepository) FindUserByID(id int) (*model.User, error) {
 	var user model.User
-	repo.storage.Where("id = ?", id).First(&user)
-
-	return user
+	err := repo.storage.Where("id = ?", id).First(&user).Error
+	
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return &user, nil
 }
 
-func (repo usersRepository) StoreUser(user model.User) (model.User, error) {
+func (repo usersRepository) StoreUser(user model.User) (*model.User, error) {
 	err := repo.storage.Create(&user).Error
-	return user, err
-}
-
-func handleErr(err error) (model.User, error) {
-	if gorm.IsRecordNotFoundError(err) {
-		return model.User{}, nil
-	}
-
-	return model.User{}, err
+	return &user, err
 }

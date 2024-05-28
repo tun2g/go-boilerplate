@@ -1,7 +1,29 @@
 package auth
 
-import "github.com/gin-gonic/gin"
+import (
+	"fist-app/src/shared/auth"
+	httpContext "fist-app/src/shared/http-context"
+	"fist-app/src/shared/jwt"
 
-func (authController *AuthController) InitRoute(routes *gin.RouterGroup) {
-	routes.POST("/login", authController.Login)
+	"github.com/gin-gonic/gin"
+)
+
+func (authController *AuthController) InitRoute(
+	routes *gin.RouterGroup,
+	jwtAccessTokenManager *jwt.JWTManager,
+	jwtRefreshTokenManager *jwt.JWTManager,
+) {
+	routes.POST(
+		"/sign-in", 
+		httpContext.CustomContextHandler(authController.Login),
+	)
+	routes.POST(
+		"/sign-up",
+		httpContext.CustomContextHandler(authController.Register),
+	)
+	routes.GET(
+		"/me",
+	 	httpContext.CustomContextHandler(auth.AuthMiddleware(jwtAccessTokenManager)), 
+		httpContext.CustomContextHandler(authController.GetMe),
+	)
 }

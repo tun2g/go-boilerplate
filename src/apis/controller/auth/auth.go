@@ -8,8 +8,7 @@ import (
 	"fist-app/src/apis/model"
 	"fist-app/src/apis/service/auth"
 	"fist-app/src/shared/exception"
-
-	"github.com/gin-gonic/gin"
+	httpContext "fist-app/src/shared/http-context"
 )
 
 type AuthController struct {
@@ -24,34 +23,87 @@ func NewAuthController(ctx context.Context, authService auth.AuthService) *AuthC
 	}
 }
 
-func (handler *AuthController) Login(context * gin.Context){
+func (handler *AuthController) Login(ctx *httpContext.CustomContext){
 		var reqDto dto.LoginReqDto
 		var err error
 		var user model.User
-		err = context.ShouldBind(&reqDto)
+		var tokens dto.TokenResDto
 
-		if err != nil {
-			exception.NewUnprocessableEntityException(
-				context.GetString("requestId"),
-				[]exception.ErrorDetail{{
-					Issue:   "",
-					Message: "a",
-				}},
-			)
+		if err := ctx.ShouldBindJSON(&reqDto); err != nil {
+			ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
 			return
 		}
 
-		user, err = handler.authService.Login(reqDto)
+		user, tokens, err = handler.authService.Login(reqDto)
 
 		if err != nil {
-			exception.NewBadRequestException(
-				context.GetString("requestId"),
+			ctx.Error(exception.NewBadRequestException(
+				ctx.GetRequestId(),
 				[]exception.ErrorDetail{{
 					Issue:   "error",
-					Message: "error",
 				}},
-			)
+			))
 			return
 		}
-		context.JSON(http.StatusCreated, user)
+		
+		userRes := dto.UserResDto{
+			ID: user.ID,
+			Email: user.Email,
+			FullName: user.FullName,
+		}
+	
+		authRes := dto.AuthResDto{
+			User: userRes,
+			Tokens: tokens,
+		}
+	
+		ctx.JSON(http.StatusOK, authRes)
+}
+
+func (handler *AuthController) Register(ctx *httpContext.CustomContext){
+	var reqDto dto.RegisterReqDto
+	var err error
+	var user model.User
+	var tokens dto.TokenResDto
+	
+	if err := ctx.ShouldBindJSON(&reqDto); err != nil {
+		ctx.Error(exception.NewUnprocessableEntityException(
+			ctx.GetRequestId(),
+			err,
+		))
+		return
+	}
+
+	user, tokens, err = handler.authService.Register(reqDto, ctx)
+
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	userRes := dto.UserResDto{
+		ID: user.ID,
+		Email: user.Email,
+		FullName: user.FullName,
+	}
+
+	authRes := dto.AuthResDto{
+		User: userRes,
+		Tokens: tokens,
+	}
+
+	ctx.JSON(http.StatusCreated, authRes)
+}
+
+func (handler *AuthController) GetMe(ctx *httpContext.CustomContext){
+	user := handler.authService.GetMe(ctx);
+	println("oke")
+	if user == nil{
+		ctx.Error(exception.NewBadRequestException(
+			ctx.GetRequestId(),
+			[]exception.ErrorDetail{{}},
+		))
+		return
+	}
+	ctx.JSON(http.StatusCreated, user)
 }

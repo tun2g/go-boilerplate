@@ -1,10 +1,15 @@
 package exception
 
-func NewBadRequestException(requestId string, details []ErrorDetail) *HttpError {
-	return &HttpError{
-		RequestId: requestId,
-		Status:    400,
-		Message:   "Bad Request Exception",
-		Details:   details,
+type BadRequestException struct {
+	HttpError
+}
+
+func NewBadRequestException(requestId string, details []ErrorDetail) *BadRequestException {
+	return &BadRequestException{
+		HttpError: HttpError{
+			RequestId: requestId,
+			Message:   "Bad Request Exception",
+			Details:   details,
+		},
 	}
 }

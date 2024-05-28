@@ -1,10 +1,15 @@
 package exception
 
-func NewForbiddenException(requestId string) *HttpError {
-	return &HttpError{
-		RequestId: requestId,
-		Status:    403,
-		Message:   "Forbidden Exception",
-		Details:   []ErrorDetail{},
+type ForbiddenException struct {
+	HttpError
+}
+
+func NewForbiddenException(requestId string) *ForbiddenException{
+	return &ForbiddenException{
+		HttpError: HttpError{
+			RequestId: requestId,
+			Message: "Forbidden",
+			Details: []ErrorDetail{{}},
+		},
 	}
 }

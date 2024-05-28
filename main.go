@@ -5,7 +5,8 @@ import (
 	"os"
 
 	server "fist-app/src"
-	"fist-app/src/db"
+	"fist-app/src/config"
+	"fist-app/src/database"
 
 	"github.com/joho/godotenv"
 )
@@ -15,15 +16,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	connection := db.InitDB()
+	connection := database.InitDB()
 
-	defer func() {
-		if err := connection.DB().Close(); err != nil {
-			log.Print(err)
-		}
-	}()
-
-	server, err := server.NewServer(connection)
+	server, err := server.NewServer(connection, config.AppConfiguration)
 
 	if(err != nil) {
 		log.Print("Can not start server due to", err)
