@@ -20,6 +20,7 @@ func Logger() *logrus.Logger {
 			FullTimestamp: true,
 			PadLevelText:  true,
 		})
+		loggerInstance.SetLevel(logrus.DebugLevel)
 	})
 	return loggerInstance
 }

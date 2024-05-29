@@ -5,9 +5,9 @@ import (
 )
 
 type ErrorDetail struct {
-	Issue   string `json:"issue"`
-	IssueId string `json:"issueId"`
-	Field   string `json:"field"`
+	Issue   string `json:"issue,omitempty"`
+	IssueId string `json:"issueId,omitempty"`
+	Field   string `json:"field,omitempty"`
 }
 
 type HttpError struct {

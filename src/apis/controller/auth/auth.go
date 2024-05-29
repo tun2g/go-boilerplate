@@ -40,7 +40,7 @@ func (handler *AuthController) Login(ctx *httpContext.CustomContext){
 			ctx.Error(exception.NewBadRequestException(
 				ctx.GetRequestId(),
 				[]exception.ErrorDetail{{
-					Issue:   "error",
+					Issue:   "Username or password is incorrect",
 				}},
 			))
 			return
@@ -97,7 +97,7 @@ func (handler *AuthController) Register(ctx *httpContext.CustomContext){
 
 func (handler *AuthController) GetMe(ctx *httpContext.CustomContext){
 	user := handler.authService.GetMe(ctx);
-	println("oke")
+
 	if user == nil{
 		ctx.Error(exception.NewBadRequestException(
 			ctx.GetRequestId(),
