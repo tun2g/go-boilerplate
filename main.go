@@ -24,7 +24,7 @@ func main() {
 		log.Print("Can not start server due to", err)
 	}
 
-	if err := server.Run(os.Getenv("PORT")); err != nil {
+	if err := server.Run(os.Getenv("APP_PORT")); err != nil {
 		log.Print(err)
 	}
 }

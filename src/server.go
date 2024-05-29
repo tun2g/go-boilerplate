@@ -10,6 +10,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "fist-app/docs"
 )
 
 type Server struct {
@@ -34,6 +37,10 @@ func NewServer(dbConnection *gorm.DB, config config.Config) (*Server, error) {
 	route.Use(httpContext.CustomContextHandler(logger.RequestLoggerMiddleware))
 	route.Use(httpContext.CustomContextHandler(logger.ResponseLoggerMiddleware))
 	route.Use(httpContext.CustomContextHandler(exception.ErrorHandler))
+	
+	if(config.SwaggerEnabled){
+		route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	server := &Server{
 		db:     dbConnection,

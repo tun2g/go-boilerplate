@@ -6,7 +6,11 @@ import (
 )
 
 type Config struct {
+	// Application
 	GoEnv string `mapstructure:"GO_ENV"`
+	AppHost string `mapstructure:"APP_HOST"`
+	AppPort int `mapstructure:"APP_PORT"`
+	SwaggerEnabled bool `mapstructure:"SWAGGER_ENABLED"`
 
 	// Database
 	DbName         string `mapstructure:"DATABASE_NAME"`

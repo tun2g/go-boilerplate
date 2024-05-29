@@ -3,17 +3,12 @@ package logger
 import (
 	httpContext "fist-app/src/shared/http-context"
 	"fmt"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
 func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
 	logger := Logger()
-	startTime := time.Now()
-
-	endTime := time.Now()
-	latency := endTime.Sub(startTime)
 
 	clientIP := ctx.ClientIP()
 	method := ctx.Request.Method
@@ -22,7 +17,7 @@ func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
 	dataLength := ctx.Writer.Size()
 
 	entry := logger.WithFields(logrus.Fields{
-		"latency":     latency,
+		"request_id": ctx.GetRequestId(),
 		"client_ip":   clientIP,
 		"method":      method,
 		"path":        path,
@@ -49,6 +44,7 @@ func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
 	dataLength := ctx.Writer.Size()
 
 	entry := logger.WithFields(logrus.Fields{
+		"request_id": ctx.GetRequestId(),
 		"status_code": statusCode,
 		"client_ip":   clientIP,
 		"method":      method,
@@ -58,7 +54,7 @@ func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
 	})
 
 	if len(ctx.Errors) > 0 {
-		entry.Errorf("----------Request completed: %s due to %s", ctx.GetRequestId(), ctx.Errors.String())
+		entry.Errorf("----------Request completed: %s due to %s", ctx.Errors.String())
 	} else{
 		entry.Info(fmt.Sprintf("----------Request completed: %s", ctx.GetRequestId()))
 	}
