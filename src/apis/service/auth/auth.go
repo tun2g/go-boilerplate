@@ -17,7 +17,7 @@ type authService struct {
 	userRepository         repository.UserRepository
 	jwtAccessTokenManager  *jwt.JWTManager
 	jwtRefreshTokenManager *jwt.JWTManager
-	bcrypt 								 *utils.BcryptEncoder
+	bcrypt                 *utils.BcryptEncoder
 }
 
 func NewAuthService(
@@ -33,7 +33,7 @@ func NewAuthService(
 	}
 }
 
-func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.CustomContext) (model.User, auth.TokenResDto,error) {
+func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.CustomContext) (model.User, auth.TokenResDto, error) {
 	var err error
 
 	user, err := srv.userRepository.FindUserByEmail(req.Email)
@@ -55,7 +55,6 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 		return model.User{}, auth.TokenResDto{}, err
 	}
 
-	
 	hashedPassword, err := srv.bcrypt.Encrypt(req.Password)
 
 	user, err = srv.userRepository.StoreUser(model.User{
@@ -65,13 +64,13 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 	})
 
 	if err != nil {
-		return model.User{}, auth.TokenResDto{},err
+		return model.User{}, auth.TokenResDto{}, err
 	}
 
-	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user);
-	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user);
-	tokens :=auth.TokenResDto{
-		AccessToken: accessToken,
+	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
+	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user)
+	tokens := auth.TokenResDto{
+		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 	return *user, tokens, nil
@@ -82,30 +81,29 @@ func (srv *authService) Login(req auth.LoginReqDto) (model.User, auth.TokenResDt
 
 	user, err := srv.userRepository.FindUserByEmail(req.Email)
 	if err != nil {
-		return model.User{}, auth.TokenResDto{},err
+		return model.User{}, auth.TokenResDto{}, err
 	}
 
-	if(user !=nil){
+	if user != nil {
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-		if(err != nil){
+		if err != nil {
 			return model.User{}, auth.TokenResDto{}, err
 		}
 	}
 
-	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user);
-	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user);
-	tokens :=auth.TokenResDto{
-		AccessToken: accessToken,
+	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
+	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(user)
+	tokens := auth.TokenResDto{
+		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 
 	return *user, tokens, nil
 }
 
-
-func (srv *authService) GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser{
+func (srv *authService) GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser {
 
 	user := ctx.GetUser()
 
-	return user;
+	return user
 }

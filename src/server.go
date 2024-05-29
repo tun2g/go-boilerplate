@@ -30,7 +30,9 @@ func NewServer(dbConnection *gorm.DB, config config.Config) (*Server, error) {
 	route.Use(cors.CorsMiddleware())
 	
 	route.Use(httpContext.HttpContextMiddleware())
-	
+
+	route.Use(httpContext.CustomContextHandler(logger.RequestLoggerMiddleware))
+	route.Use(httpContext.CustomContextHandler(logger.ResponseLoggerMiddleware))
 	route.Use(httpContext.CustomContextHandler(exception.ErrorHandler))
 
 	server := &Server{
