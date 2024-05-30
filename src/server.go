@@ -3,16 +3,20 @@ package src
 import (
 	"context"
 	"fist-app/src/config"
+	"fist-app/src/database"
 	logger "fist-app/src/lib/logger"
 	"fist-app/src/shared/cors"
 	"fist-app/src/shared/exception"
 	httpContext "fist-app/src/shared/http-context"
+	"os"
+
+	_ "fist-app/docs"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "fist-app/docs"
+	"github.com/urfave/cli"
+	"gorm.io/gorm"
 )
 
 type Server struct {
@@ -22,12 +26,13 @@ type Server struct {
 	config config.Config
 }
 
+var log = logger.Logger()
+
 func NewServer(dbConnection *gorm.DB, config config.Config) (*Server, error) {
 	ctx := context.Background()
 
 	route := gin.Default()
 	
-	log := logger.Logger()
 	gin.DefaultWriter = log.Writer()
 	
 	route.Use(cors.CorsMiddleware())
@@ -63,4 +68,27 @@ func (server *Server) Engine() *gin.Engine {
 
 func (server *Server) Database() *gorm.DB {
 	return server.db
+}
+
+
+func StartServer() cli.Command{
+	cli := cli.Command{
+		Name:  "server",
+		Usage: "send example tasks ",
+		Action: func(c *cli.Context) error {
+			connection := database.InitDB()
+
+			server, err := NewServer(connection, config.AppConfiguration)
+		
+			if(err != nil) {
+				log.Print("Can not start server due to", err)
+			}
+		
+			if err := server.Run(os.Getenv("APP_PORT")); err != nil {
+				log.Print(err)
+			}
+			return nil
+		},
+	}
+	return cli
 }
