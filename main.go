@@ -23,7 +23,6 @@ func init() {
 	client.Version = "0.0.0"
 }
 
-
 func main() {
 	var _logger = logger.Logger()
 
@@ -47,5 +46,4 @@ func main() {
 	if err != nil {
 		_logger.Fatalf(err.Error())
 	}
-
 }
