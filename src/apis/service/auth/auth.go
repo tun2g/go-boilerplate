@@ -34,7 +34,7 @@ func NewAuthService(
 	}
 }
 
-func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.CustomContext) (model.User, auth.TokenResDto, error) {
+func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error) {
 	var err error
 
 	user, err := srv.userRepository.FindUserByEmail(req.Email)
@@ -48,11 +48,11 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 				IssueId: "exists_email",
 			}},
 		)
-		return model.User{}, auth.TokenResDto{}, err
+		return nil, nil, err
 	}
 
 	if err != nil {
-		return model.User{}, auth.TokenResDto{}, err
+		return nil, nil, err
 	}
 
 	hashedPassword, err := srv.bcrypt.Encrypt(req.Password)
@@ -64,7 +64,7 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 	})
 
 	if err != nil {
-		return model.User{}, auth.TokenResDto{}, err
+		return nil, nil, err
 	}
 
 	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
@@ -73,7 +73,7 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
-	return *user, tokens, nil
+	return user, &tokens, nil
 }
 
 func (srv *authService) Login(req auth.LoginReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error) {
@@ -115,4 +115,34 @@ func (srv *authService) GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser {
 	user := ctx.GetUser()
 
 	return user
+}
+
+func (srv *authService) RefreshToken(ctx *httpContext.CustomContext) (*auth.TokenResDto, error){
+	user := ctx.GetUser()
+
+	if user == nil {
+		err := exception.NewUnauthorizedException(ctx.GetRequestId())
+		return nil, err
+	}
+
+	_user, err := srv.userRepository.FindUserByEmail(user.Email)
+
+	if user == nil {
+		err := exception.NewUnauthorizedException(ctx.GetRequestId())
+		return nil, err
+	}
+
+	if err != nil {
+		err := exception.NewUnauthorizedException(ctx.GetRequestId())
+		return nil, err
+	}
+
+	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(_user)
+	refreshToken, _, err := srv.jwtRefreshTokenManager.CreateToken(_user)
+	tokens := auth.TokenResDto{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	return &tokens, nil
 }

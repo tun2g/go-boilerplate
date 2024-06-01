@@ -26,4 +26,9 @@ func (authController *AuthController) InitRoute(
 	 	httpContext.CustomContextHandler(auth.AuthMiddleware(jwtAccessTokenManager)), 
 		httpContext.CustomContextHandler(authController.GetMe),
 	)
+	routes.GET(
+		"/refresh-token",
+		httpContext.CustomContextHandler(auth.AuthMiddleware(jwtRefreshTokenManager)),
+		httpContext.CustomContextHandler(authController.RefreshToken),
+	)
 }

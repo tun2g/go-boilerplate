@@ -9,6 +9,7 @@ import (
 
 type AuthService interface {
 	Login(dto auth.LoginReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error)
-	Register(dto auth.RegisterReqDto, ctx *httpContext.CustomContext) (model.User, auth.TokenResDto,error)
+	Register(dto auth.RegisterReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error)
 	GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser
+	RefreshToken(ctx *httpContext.CustomContext) (*auth.TokenResDto, error)
 }
