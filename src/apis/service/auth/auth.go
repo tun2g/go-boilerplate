@@ -30,6 +30,7 @@ func NewAuthService(
 		userRepository:         userRepository,
 		jwtAccessTokenManager:  jwtAccessTokenManager,
 		jwtRefreshTokenManager: jwtRefreshTokenManager,
+		bcrypt:                 bcrypt,
 	}
 }
 
@@ -37,11 +38,6 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 	var err error
 
 	user, err := srv.userRepository.FindUserByEmail(req.Email)
-
-	if err != nil {
-		err = exception.NewInternalServerError(ctx.GetRequestId())
-		return model.User{}, auth.TokenResDto{}, err
-	}
 
 	if user != nil {
 		err = exception.NewBadRequestException(
@@ -52,6 +48,10 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 				IssueId: "exists_email",
 			}},
 		)
+		return model.User{}, auth.TokenResDto{}, err
+	}
+
+	if err != nil {
 		return model.User{}, auth.TokenResDto{}, err
 	}
 
@@ -76,19 +76,28 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 	return *user, tokens, nil
 }
 
-func (srv *authService) Login(req auth.LoginReqDto) (model.User, auth.TokenResDto, error) {
+func (srv *authService) Login(req auth.LoginReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error) {
 	var err error
 
 	user, err := srv.userRepository.FindUserByEmail(req.Email)
 	if err != nil {
-		return model.User{}, auth.TokenResDto{}, err
+		return nil, nil, err
 	}
 
-	if user != nil {
-		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-		if err != nil {
-			return model.User{}, auth.TokenResDto{}, err
-		}
+	if user == nil {
+		err = exception.NewBadRequestException(
+			ctx.GetRequestId(),
+			[]exception.ErrorDetail{{
+				Issue:   "Email or password is invalid",
+			}},
+		)
+		return nil, nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+
+	if err != nil {
+		return nil, nil, err
 	}
 
 	accessToken, _, err := srv.jwtAccessTokenManager.CreateToken(user)
@@ -98,7 +107,7 @@ func (srv *authService) Login(req auth.LoginReqDto) (model.User, auth.TokenResDt
 		RefreshToken: refreshToken,
 	}
 
-	return *user, tokens, nil
+	return user, &tokens, nil
 }
 
 func (srv *authService) GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser {

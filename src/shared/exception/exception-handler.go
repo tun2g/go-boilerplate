@@ -30,7 +30,7 @@ func ErrorHandler(ctx *httpContext.CustomContext) {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 				"requestId": ctx.GetRequestId(),
 				"message":   "Internal Server Error Exception",
-				"details":   []ErrorDetail{{}},
+				"details":   []ErrorDetail{},
 			})
 		}
 	}

@@ -23,6 +23,10 @@ func (repo usersRepository) FindUserByEmail(email string) (*model.User, error) {
 		return nil, nil
 	}
 
+	if(err != nil){
+		return nil, err
+	}
+
 	return &user, nil
 }
 

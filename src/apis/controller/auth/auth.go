@@ -26,23 +26,18 @@ func NewAuthController(ctx context.Context, authService auth.AuthService) *AuthC
 func (handler *AuthController) Login(ctx *httpContext.CustomContext){
 		var reqDto dto.LoginReqDto
 		var err error
-		var user model.User
-		var tokens dto.TokenResDto
+		var user *model.User
+		var tokens *dto.TokenResDto
 
 		if err := ctx.ShouldBindJSON(&reqDto); err != nil {
 			ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
 			return
 		}
 
-		user, tokens, err = handler.authService.Login(reqDto)
+		user, tokens, err = handler.authService.Login(reqDto, ctx)
 
 		if err != nil {
-			ctx.Error(exception.NewBadRequestException(
-				ctx.GetRequestId(),
-				[]exception.ErrorDetail{{
-					Issue:   "Username or password is incorrect",
-				}},
-			))
+			ctx.Error(err)
 			return
 		}
 		
@@ -54,7 +49,7 @@ func (handler *AuthController) Login(ctx *httpContext.CustomContext){
 	
 		authRes := dto.AuthResDto{
 			User: userRes,
-			Tokens: tokens,
+			Tokens: *tokens,
 		}
 	
 		ctx.JSON(http.StatusOK, authRes)
