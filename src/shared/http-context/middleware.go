@@ -1,16 +1,17 @@
-package middleware
+package httpContext
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func RequestIdMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func HttpContextMiddleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		customContext := &CustomContext{Context: ctx}
 		requestId := uuid.New()
 
-		c.Set("requestId", requestId.String())
+		customContext.SetRequestId(requestId.String())
 
-		c.Next()
+		ctx.Next()
 	}
 }

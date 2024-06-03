@@ -1,23 +1,29 @@
 package exception
 
+import (
+	httpContext "fist-app/src/shared/http-context"
+)
+
 type ErrorDetail struct {
-	Issue   string `json:"issue"`
-	IssueId string `json:"issueId"`
-	Message string `json:"message"`
+	Issue   string `json:"issue,omitempty"`
+	IssueId string `json:"issueId,omitempty"`
+	Field   string `json:"field,omitempty"`
 }
 
 type HttpError struct {
 	RequestId string        `json:"requestId"`
-	Status    int           `json:"status"`
 	Message   string        `json:"message"`
 	Details   []ErrorDetail `json:"details"`
 }
 
-func NewHttpError(requestId string, status int, message string, details []ErrorDetail) *HttpError {
-	return &HttpError{
+func (e *HttpError) Error() string {
+	return e.Message
+}
+
+func NewHttpError(ctx *httpContext.CustomContext, requestId string, status int, message string, details []ErrorDetail) {
+	ctx.AbortWithStatusJSON(status, HttpError{
 		RequestId: requestId,
-		Status:    status,
 		Message:   message,
 		Details:   details,
-	}
+	})
 }

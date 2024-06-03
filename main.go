@@ -1,35 +1,49 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	server "fist-app/src"
-	"fist-app/src/db"
+	"fist-app/src/database"
+	"fist-app/src/lib/logger"
+
+	"github.com/urfave/cli"
 
 	"github.com/joho/godotenv"
 )
 
+var (
+	client *cli.App
+)
+
+func init() {
+	client = cli.NewApp()
+	client.Name = ""
+	client.Usage = ""
+	client.Version = "0.0.0"
+}
+
 func main() {
+	var _logger = logger.Logger()
+
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		_logger.Fatal("Error loading .env file")
 	}
 
-	connection := db.InitDB()
+	client.Commands = []cli.Command{
+		// RUN: server
+		server.StartServer(),
 
-	defer func() {
-		if err := connection.DB().Close(); err != nil {
-			log.Print(err)
-		}
-	}()
+		// RUN: migrate
+		database.Migration(),
 
-	server, err := server.NewServer(connection)
-
-	if(err != nil) {
-		log.Print("Can not start server due to", err)
+		// RUN: rollback
+		database.Rollback(),		
 	}
 
-	if err := server.Run(os.Getenv("PORT")); err != nil {
-		log.Print(err)
+	// Run the CLI app
+	err := client.Run(os.Args)
+	if err != nil {
+		_logger.Fatalf(err.Error())
 	}
 }
