@@ -29,6 +29,22 @@ func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
 		entry.Error(ctx.Errors.String())
 	}
 	entry.Info(fmt.Sprintf("----------Request received: %s", ctx.GetRequestId()))
+
+	user := ctx.GetUser()
+
+	if(user != nil){
+		context := logger.WithFields(logrus.Fields{
+			"user_id": user.ID,
+			"email": user.Email,
+			"role": user.Role,
+			"full_name": user.FullName,
+		})
+		context.Info("----------Context before is")
+	} else{
+		context := logger.WithField("request_id", ctx.GetRequestId())
+		context.Info("----------Context before is")
+	}
+
 }
 
 func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
@@ -52,6 +68,21 @@ func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
 		"user_agent":  userAgent,
 		"data_length": dataLength,
 	})
+
+	user := ctx.GetUser()
+
+	if(user != nil){
+		context := logger.WithFields(logrus.Fields{
+			"user_id": user.ID,
+			"email": user.Email,
+			"role": user.Role,
+			"full_name": user.FullName,
+		})
+		context.Info("----------Context after is")
+	} else{
+		context := logger.WithField("request_id", ctx.GetRequestId())
+		context.Info("----------Context after is")
+	}
 
 	if len(ctx.Errors) > 0 {
 		entry.Errorf("----------Request completed: %s due to %s", ctx.Errors.String())
