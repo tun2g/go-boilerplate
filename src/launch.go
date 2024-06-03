@@ -2,8 +2,8 @@ package src
 
 import (
 	authController "fist-app/src/apis/controller/auth"
-	repository "fist-app/src/apis/repository/user"
 	authService "fist-app/src/apis/service/auth"
+	repository "fist-app/src/apis/repository/user"
 	"fist-app/src/shared/jwt"
 	"fist-app/src/shared/utils"
 	"time"

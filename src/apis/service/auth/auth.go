@@ -10,6 +10,8 @@ import (
 	"fist-app/src/shared/jwt"
 	"fist-app/src/shared/utils"
 
+	authRole "fist-app/src/shared/auth/constants"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -61,6 +63,7 @@ func (srv *authService) Register(req auth.RegisterReqDto, ctx *httpContext.Custo
 		Email:    req.Email,
 		Password: hashedPassword,
 		FullName: req.FullName,
+		Role:     authRole.AuthUser,
 	})
 
 	if err != nil {
@@ -88,7 +91,7 @@ func (srv *authService) Login(req auth.LoginReqDto, ctx *httpContext.CustomConte
 		err = exception.NewBadRequestException(
 			ctx.GetRequestId(),
 			[]exception.ErrorDetail{{
-				Issue:   "Email or password is invalid",
+				Issue: "Email or password is invalid",
 			}},
 		)
 		return nil, nil, err
@@ -117,7 +120,7 @@ func (srv *authService) GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser {
 	return user
 }
 
-func (srv *authService) RefreshToken(ctx *httpContext.CustomContext) (*auth.TokenResDto, error){
+func (srv *authService) RefreshToken(ctx *httpContext.CustomContext) (*auth.TokenResDto, error) {
 	user := ctx.GetUser()
 
 	if user == nil {

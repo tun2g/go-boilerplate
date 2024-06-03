@@ -16,8 +16,6 @@ func InitDB() *gorm.DB {
 		os.Getenv("DATABASE_PORT"),
 		os.Getenv("DATABASE_NAME"))
 
-	fmt.Println(dataSourceName)
-
 	db, err := gorm.Open(mysql.Open(dataSourceName), &gorm.Config{})
 
 	if err != nil {

@@ -36,3 +36,12 @@ func (ctx * CustomContext) GetRequestId() string {
 	return requestId
 }
 
+func (ctx *CustomContext) SetIsPublicRoute(){
+	ctx.Set(httpContextConstant.IsPublic, true)
+}
+
+func (ctx *CustomContext) GetIsPublicRoute() bool{
+	isPublic := ctx.GetBool(httpContextConstant.IsPublic)
+	return isPublic
+}
+

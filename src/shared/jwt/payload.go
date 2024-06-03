@@ -12,6 +12,7 @@ type JwtPayload struct {
 	Email     string    `json:"email"`
 	TokenId   string    `json:"tokenId"`
 	FullName  string    `json:"fullName"`
+	Role      string    `json:"role"`
 	IssuedAt  time.Time `json:"issuedAt"`
 	ExpiredAt time.Time `json:"expiredTime"`
 }
@@ -22,6 +23,7 @@ func NewJwtPayload(user *model.User, expirationTime time.Duration) *JwtPayload {
 		TokenId:   tokenId,
 		UserId:    user.ID,
 		Email:     user.Email,
+		Role:      user.Role,
 		FullName:  user.FullName,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(expirationTime * 1000000000),

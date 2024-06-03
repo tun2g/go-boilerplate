@@ -1,9 +1,11 @@
 package jwt
 
-import "time"
+import (
+	"fist-app/src/apis/model"
+)
 
 type Manager interface {
-	CreateToken(username string, duration time.Duration) (string, *JwtPayload, error)
+	CreateToken(user *model.User) (string, *JwtPayload, error)
 
 	VerifyToken(token string) (*JwtPayload, error)
 }

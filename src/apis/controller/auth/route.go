@@ -17,18 +17,21 @@ func (authController *AuthController) InitRoute(
 		"/sign-in", 
 		httpContext.CustomContextHandler(authController.Login),
 	)
+
 	routes.POST(
 		"/sign-up",
 		httpContext.CustomContextHandler(authController.Register),
 	)
+
 	routes.GET(
 		"/me",
-	 	httpContext.CustomContextHandler(auth.AuthMiddleware(jwtAccessTokenManager)), 
+		httpContext.CustomContextHandler(auth.TokenAuthMiddleware(jwtAccessTokenManager)),
 		httpContext.CustomContextHandler(authController.GetMe),
 	)
+
 	routes.GET(
 		"/refresh-token",
-		httpContext.CustomContextHandler(auth.AuthMiddleware(jwtRefreshTokenManager)),
+		httpContext.CustomContextHandler(auth.TokenAuthMiddleware(jwtRefreshTokenManager)),
 		httpContext.CustomContextHandler(authController.RefreshToken),
 	)
 }
