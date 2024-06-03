@@ -5,6 +5,7 @@ import (
 	"fist-app/src/apis/model"
 	"fist-app/src/shared/dto"
 	httpContext "fist-app/src/shared/http-context"
+	pageDto "fist-app/src/shared/dto"
 )
 
 type AuthService interface {
@@ -12,4 +13,5 @@ type AuthService interface {
 	Register(dto auth.RegisterReqDto, ctx *httpContext.CustomContext) (*model.User, *auth.TokenResDto, error)
 	GetMe(ctx *httpContext.CustomContext) *dto.CurrentUser
 	RefreshToken(ctx *httpContext.CustomContext) (*auth.TokenResDto, error)
+	GetUsers(ctx *httpContext.CustomContext, dto *pageDto.PageOptionsDto) (*pageDto.PageDto, error)
 }

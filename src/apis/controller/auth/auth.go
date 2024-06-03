@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	dto "fist-app/src/apis/dto/auth"
-	"fist-app/src/apis/model"
+	pageDto "fist-app/src/shared/dto"
 	authService "fist-app/src/apis/service/auth"
-	"fist-app/src/shared/exception"
 	httpContext "fist-app/src/shared/http-context"
+	"fist-app/src/apis/model"
+	"fist-app/src/shared/exception"
 )
 
 type AuthController struct {
@@ -112,4 +113,24 @@ func (handler *AuthController) RefreshToken(ctx *httpContext.CustomContext) {
 	}
 
 	ctx.JSON(http.StatusOK, *tokens)
+}
+
+
+func (handler *AuthController) GetUsers(ctx *httpContext.CustomContext){
+	var queryDto pageDto.PageOptionsDto
+	if err := ctx.ShouldBindQuery(&queryDto); err != nil {
+		ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
+		return
+	}
+
+	queryDto = *pageDto.NewPageOptionsDto(&queryDto);
+
+	data, err := handler.authService.GetUsers(ctx, &queryDto);
+
+	if(err!=nil){
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, data)
 }

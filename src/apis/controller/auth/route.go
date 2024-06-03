@@ -34,4 +34,9 @@ func (authController *AuthController) InitRoute(
 		httpContext.CustomContextHandler(auth.TokenAuthMiddleware(jwtRefreshTokenManager)),
 		httpContext.CustomContextHandler(authController.RefreshToken),
 	)
+
+	routes.GET(
+		"/all",
+		httpContext.CustomContextHandler(authController.GetUsers),
+	)
 }

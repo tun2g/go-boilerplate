@@ -5,6 +5,7 @@ import (
 	"fist-app/src/apis/model"
 	repository "fist-app/src/apis/repository/user"
 	"fist-app/src/shared/dto"
+	pageDto "fist-app/src/shared/dto"
 	"fist-app/src/shared/exception"
 	httpContext "fist-app/src/shared/http-context"
 	"fist-app/src/shared/jwt"
@@ -148,4 +149,25 @@ func (srv *authService) RefreshToken(ctx *httpContext.CustomContext) (*auth.Toke
 	}
 
 	return &tokens, nil
+}
+
+func (srv *authService) GetUsers(ctx *httpContext.CustomContext, dto *pageDto.PageOptionsDto) (*pageDto.PageDto, error){
+	users, err := srv.userRepository.GetAll(dto)
+	if(err != nil){
+		return nil, err
+	}
+
+	count, err := srv.userRepository.CountByPageDto(dto)
+	if(err != nil){
+		return nil, err
+	}
+	
+	entities := make([]interface{}, len(*users))
+	for i, user := range *users {
+		entities[i] = user
+	}
+
+	pageRes := utils.GeneratePaginationResult(count, entities, dto)
+
+	return pageRes, nil
 }
