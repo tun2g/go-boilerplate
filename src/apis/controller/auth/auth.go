@@ -24,6 +24,7 @@ func NewAuthController(ctx context.Context, authService authService.AuthService)
 	}
 }
 
+
 func (handler *AuthController) Login(ctx *httpContext.CustomContext) {
 	var reqDto dto.LoginReqDto
 	var err error
@@ -56,6 +57,7 @@ func (handler *AuthController) Login(ctx *httpContext.CustomContext) {
 	ctx.JSON(http.StatusOK, authRes)
 }
 
+
 func (handler *AuthController) Register(ctx *httpContext.CustomContext) {
 	var reqDto dto.RegisterReqDto
 	var err error
@@ -87,6 +89,7 @@ func (handler *AuthController) Register(ctx *httpContext.CustomContext) {
 
 	ctx.JSON(http.StatusCreated, authRes)
 }
+
 
 func (handler *AuthController) GetMe(ctx *httpContext.CustomContext) {
 	user := handler.authService.GetMe(ctx)
