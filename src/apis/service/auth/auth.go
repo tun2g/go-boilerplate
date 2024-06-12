@@ -101,6 +101,12 @@ func (srv *authService) Login(req auth.LoginReqDto, ctx *httpContext.CustomConte
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 
 	if err != nil {
+		err = exception.NewBadRequestException(
+			ctx.GetRequestId(),
+			[]exception.ErrorDetail{{
+				Issue: "Email or password is invalid",
+			}},
+		)
 		return nil, nil, err
 	}
 
