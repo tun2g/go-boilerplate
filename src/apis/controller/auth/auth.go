@@ -63,10 +63,7 @@ func (handler *AuthController) Register(ctx *httpContext.CustomContext) {
 	var tokens *dto.TokenResDto
 
 	if err := ctx.ShouldBindJSON(&reqDto); err != nil {
-		ctx.Error(exception.NewUnprocessableEntityException(
-			ctx.GetRequestId(),
-			err,
-		))
+		ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
 		return
 	}
 
@@ -101,7 +98,7 @@ func (handler *AuthController) GetMe(ctx *httpContext.CustomContext) {
 		))
 		return
 	}
-	ctx.JSON(http.StatusCreated, user)
+	ctx.JSON(http.StatusOK, user)
 }
 
 func (handler *AuthController) RefreshToken(ctx *httpContext.CustomContext) {

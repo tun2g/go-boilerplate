@@ -2,7 +2,9 @@ package exception
 
 import (
 	"fmt"
-
+	"net/http"
+	
+	httpContext "fist-app/src/shared/http-context"
 	validator "github.com/go-playground/validator/v10"
 )
 
@@ -30,6 +32,18 @@ func manufactureValidationException(err error) []ErrorDetail{
 		}
 	}
 	return validationErrors
+}
+
+func ThrowUnprocessableEntityException(ctx *httpContext.CustomContext, err error){
+	details := manufactureValidationException(err)
+	ctx.AbortWithStatusJSON(
+		http.StatusUnprocessableEntity,
+		HttpError{
+			Message: "Unprocessable Entity Exception",
+			RequestId: ctx.GetRequestId(),
+			Details: details,
+		},
+	)
 }
 
 func NewUnprocessableEntityException(requestId string, err error) *UnprocessableEntityException{
