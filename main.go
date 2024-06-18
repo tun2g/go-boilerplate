@@ -23,6 +23,25 @@ func init() {
 	client.Version = "0.0.0"
 }
 
+
+// @title Swagger UI
+// @version 1.0
+// @description Golang Gin Boilerplate.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	var _logger = logger.NewLogger("main")
 
