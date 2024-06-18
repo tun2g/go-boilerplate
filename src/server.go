@@ -26,14 +26,14 @@ type Server struct {
 	config config.Config
 }
 
-var log = logger.Logger()
+var _logger = logger.NewLogger("server")
 
 func NewServer(dbConnection *gorm.DB, config config.Config) (*Server, error) {
 	ctx := context.Background()
 
 	route := gin.Default()
 	
-	gin.DefaultWriter = log.Writer()
+	gin.DefaultWriter = _logger.Writer()
 	
 	route.Use(cors.CorsMiddleware())
 	
@@ -81,11 +81,11 @@ func StartServer() cli.Command{
 			server, err := NewServer(connection, config.AppConfiguration)
 		
 			if(err != nil) {
-				log.Print("Can not start server due to", err)
+				_logger.Print("Can not start server due to", err)
 			}
 		
 			if err := server.Run(os.Getenv("APP_PORT")); err != nil {
-				log.Print(err)
+				_logger.Print(err)
 			}
 			return nil
 		},

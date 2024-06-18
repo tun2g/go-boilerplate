@@ -7,10 +7,10 @@ import (
 
 type Config struct {
 	// Application
-	GoEnv string `mapstructure:"GO_ENV"`
-	AppHost string `mapstructure:"APP_HOST"`
-	AppPort int `mapstructure:"APP_PORT"`
-	SwaggerEnabled bool `mapstructure:"SWAGGER_ENABLED"`
+	GoEnv          string `mapstructure:"GO_ENV"`
+	AppHost        string `mapstructure:"APP_HOST"`
+	AppPort        int    `mapstructure:"APP_PORT"`
+	SwaggerEnabled bool   `mapstructure:"SWAGGER_ENABLED"`
 
 	// Database
 	DbName         string `mapstructure:"DATABASE_NAME"`
@@ -28,6 +28,9 @@ type Config struct {
 	JwtAccessTokenSecret          string `mapstructure:"JWT_ACCESS_TOKEN_SECRET"`
 	JwtRefreshTokenExpirationTime int    `mapstructure:"JWT_REFRESH_TOKEN_EXPIRATION_TIME"`
 	JwtRefreshTokenSecret         string `mapstructure:"JWT_REFRESH_TOKEN_SECRET"`
+
+	// Redis broker
+	RedisBrokerUrl string `mapstructure:"REDIS_BROKER_URL"`
 }
 
 func loadConfiguration(path string) (config Config) {

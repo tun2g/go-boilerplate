@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var _logger = logger.Logger()
+var _logger = logger.NewLogger("database")
 
 func GetMigrations() []*gormigrate.Migration {
 	return []*gormigrate.Migration{

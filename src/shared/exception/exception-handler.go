@@ -1,14 +1,15 @@
 package exception
 
 import (
-	"fist-app/src/lib/logger"
-	httpContext "fist-app/src/shared/http-context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	
+	"fist-app/src/lib/logger"
+	httpContext "fist-app/src/shared/http-context"
 )
 
-var _logger = logger.Logger()
+var _logger = logger.NewLogger("exception")
 
 func ErrorHandler(ctx *httpContext.CustomContext) {
 	ctx.Next()
@@ -32,6 +33,7 @@ func ErrorHandler(ctx *httpContext.CustomContext) {
 				"message":   "Internal Server Error Exception",
 				"details":   []ErrorDetail{},
 			})
+			return
 		}
 	}
 }

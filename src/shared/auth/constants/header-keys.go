@@ -1,7 +1,7 @@
 package auth
 
 var (
-	AuthorizationHeaderKey  = "authorization"
+	AuthorizationHeaderKey = "authorization"
 	AuthorizationBearerKey = "bearer"
-	AuthUser = "user"
+	AuthUser               = "user"
 )

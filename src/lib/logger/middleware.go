@@ -8,7 +8,7 @@ import (
 )
 
 func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
-	logger := Logger()
+	logger := NewLogger("LoggerMiddleware")
 
 	clientIP := ctx.ClientIP()
 	method := ctx.Request.Method
@@ -48,7 +48,7 @@ func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
 }
 
 func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
-	logger := Logger()
+	logger := NewLogger("LoggerMiddleware")
 
 	ctx.Next()
 
@@ -85,7 +85,7 @@ func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
 	}
 
 	if len(ctx.Errors) > 0 {
-		entry.Errorf("----------Request completed: %s due to %s", ctx.Errors.String())
+		entry.Errorf("----------Request completed: due to %s in %s", ctx.Errors.String(), ctx.HandlerName())
 	} else{
 		entry.Info(fmt.Sprintf("----------Request completed: %s", ctx.GetRequestId()))
 	}

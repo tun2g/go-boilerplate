@@ -2,6 +2,8 @@ package exception
 
 import (
 	httpContext "fist-app/src/shared/http-context"
+	"fmt"
+	"encoding/json"
 )
 
 type ErrorDetail struct {
@@ -17,7 +19,14 @@ type HttpError struct {
 }
 
 func (e *HttpError) Error() string {
-	return e.Message
+	errMsg := fmt.Sprintf("RequestID: %s, Message: %s", e.RequestId, e.Message)
+
+	if len(e.Details) > 0 {
+		detailsJSON, _ := json.Marshal(e.Details)
+		errMsg += fmt.Sprintf(", Details: %s", detailsJSON)
+	}
+
+	return errMsg
 }
 
 func NewHttpError(ctx *httpContext.CustomContext, requestId string, status int, message string, details []ErrorDetail) {

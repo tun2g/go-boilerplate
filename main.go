@@ -24,7 +24,7 @@ func init() {
 }
 
 func main() {
-	var _logger = logger.Logger()
+	var _logger = logger.NewLogger("main")
 
 	if err := godotenv.Load(); err != nil {
 		_logger.Fatal("Error loading .env file")

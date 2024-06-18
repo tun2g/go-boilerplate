@@ -1,26 +1,16 @@
 package logger
 
 import (
-	"sync"
-
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	loggerInstance *logrus.Logger
-	once           sync.Once
-)
-
-// Logger returns a singleton instance of the logrus.Logger
-func Logger() *logrus.Logger {
-	once.Do(func() {
-		loggerInstance = logrus.New()
-		loggerInstance.SetFormatter(&logrus.TextFormatter{
-			ForceColors:   true,
-			FullTimestamp: true,
-			PadLevelText:  true,
-		})
-		loggerInstance.SetLevel(logrus.DebugLevel)
+func NewLogger(context string) *logrus.Entry {
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.TextFormatter{
+		ForceColors:   true,
+		FullTimestamp: true,
+		PadLevelText:  true,
 	})
-	return loggerInstance
+	logger.SetLevel(logrus.DebugLevel)
+	return logger.WithField("context", context)
 }
