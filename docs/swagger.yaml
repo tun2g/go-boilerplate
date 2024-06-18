@@ -48,6 +48,14 @@ definitions:
       id:
         type: string
     type: object
+  constants.Order:
+    enum:
+    - ASC
+    - DESC
+    type: string
+    x-enum-varnames:
+    - ASC
+    - DESC
   exception.ErrorDetail:
     properties:
       field:
@@ -171,6 +179,63 @@ paths:
       tags:
       - Auth
   /posts:
+    get:
+      description: Retrieves posts for a specific user based on provided query parameters.
+      parameters:
+      - in: query
+        maximum: 50
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        minimum: 0
+        name: offset
+        type: integer
+      - enum:
+        - ASC
+        - DESC
+        in: query
+        name: order
+        type: string
+        x-enum-varnames:
+        - ASC
+        - DESC
+      - in: query
+        name: order_field
+        type: string
+      - in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/post.PostResDto'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get posts by user ID with pagination and ordering
+      tags:
+      - Post
     post:
       consumes:
       - application/json

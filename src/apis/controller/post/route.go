@@ -17,4 +17,10 @@ func (postController *PostController) InitRoute(
 		httpContext.CustomContextHandler(auth.TokenAuthMiddleware(jwtAccessTokenManager)),
 		httpContext.CustomContextHandler(postController.CreateNewPost),
 	)
+
+	routes.GET(
+		"",
+		httpContext.CustomContextHandler(auth.TokenAuthMiddleware(jwtAccessTokenManager)),
+		httpContext.CustomContextHandler(postController.GetPostsByUser),
+	)
 }

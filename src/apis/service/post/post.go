@@ -1,10 +1,12 @@
 package post
 
 import (
+	postDto "fist-app/src/apis/dto/post"
 	"fist-app/src/apis/model"
 	repository "fist-app/src/apis/repository/post"
+	pageDto "fist-app/src/shared/dto"
 	httpContext "fist-app/src/shared/http-context"
-	postDto "fist-app/src/apis/dto/post"
+	"fist-app/src/shared/utils"
 )
 
 type postService struct {
@@ -29,6 +31,31 @@ func (srv *postService) CreateNewPost(
 		Description: dto.Description,
 	})
 	return post, err;
+}
+
+func (srv *postService) GetPostsByUserId(
+	ctx *httpContext.CustomContext,
+	userId string,
+	dto *pageDto.PageOptionsDto,
+)(*pageDto.PageDto, error){
+	posts, err := srv.postRepository.GetPostsByUserIdAndPageDto(userId, dto)
+	if(err != nil){
+		return nil, err
+	}
+
+	count, err := srv.postRepository.CountByUserIdAndPageDto(userId, dto)
+	if(err != nil){
+		return nil, err
+	}
+	
+	entities := make([]interface{}, len(*posts))
+	for i, post := range *posts {
+		entities[i] = post
+	}
+
+	pageRes := utils.GeneratePaginationResult(count, entities, dto)
+
+	return pageRes, nil
 }
 
 

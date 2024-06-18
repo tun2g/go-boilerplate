@@ -24,12 +24,12 @@ func TokenAuthMiddleware(jwtManager *jwt.JWTManager) func(ctx *httpContext.Custo
 		var accessToken string
 		authorizationHeader := ctx.GetHeader(authConstants.AuthorizationHeaderKey)
 		
+		if len(authorizationHeader) == 0 && isPublic == false {
+			exception.ThrowUnauthorizedException(ctx)
+			return
+		}
+		
 		if(config.AppConfiguration.GoEnv == "production"){
-			if len(authorizationHeader) == 0 && isPublic == false {
-				exception.ThrowUnauthorizedException(ctx)
-				return
-			}
-	
 			fields := strings.Fields(authorizationHeader)
 			if len(fields) < 2 && isPublic == false{
 				exception.ThrowUnauthorizedException(ctx)

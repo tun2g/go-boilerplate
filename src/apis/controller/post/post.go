@@ -3,6 +3,7 @@ package post
 import (
 	"context"
 	postDto "fist-app/src/apis/dto/post"
+	pageDto "fist-app/src/shared/dto"
 	"fist-app/src/apis/model"
 	postService "fist-app/src/apis/service/post"
 	"fist-app/src/shared/dto"
@@ -54,4 +55,24 @@ func (handler *PostController) CreateNewPost(ctx *httpContext.CustomContext) {
 	}
 
 	ctx.JSON(http.StatusCreated, postRes)
+}
+
+
+func (handler *PostController) GetPostsByUser(ctx *httpContext.CustomContext){
+	var queryDto pageDto.PageOptionsDto
+	if err := ctx.ShouldBindQuery(&queryDto); err != nil {
+		ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
+		return
+	}
+	queryDto = *pageDto.NewPageOptionsDto(&queryDto);
+	user :=  ctx.GetUser()
+
+	data, err := handler.postService.GetPostsByUserId(ctx, user.Id, &queryDto);
+
+	if(err!=nil){
+		ctx.Error(err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, data)	
 }
