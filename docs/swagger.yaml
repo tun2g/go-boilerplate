@@ -1,0 +1,218 @@
+basePath: /
+definitions:
+  auth.AuthResDto:
+    properties:
+      tokens:
+        $ref: '#/definitions/auth.TokenResDto'
+      user:
+        $ref: '#/definitions/auth.UserResDto'
+    type: object
+  auth.LoginReqDto:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.RegisterReqDto:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - fullName
+    - password
+    type: object
+  auth.TokenResDto:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  auth.UserResDto:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: string
+    type: object
+  exception.ErrorDetail:
+    properties:
+      field:
+        type: string
+      issue:
+        type: string
+      issueId:
+        type: string
+    type: object
+  exception.HttpError:
+    properties:
+      details:
+        items:
+          $ref: '#/definitions/exception.ErrorDetail'
+        type: array
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  post.CreatePostReqDto:
+    properties:
+      description:
+        minLength: 8
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  post.PostResDto:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Golang Gin Boilerplate.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger UI
+  version: "1.0"
+paths:
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: User login
+      parameters:
+      - description: Login request
+        in: body
+        name: loginReq
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginReqDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.AuthResDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      summary: Login
+      tags:
+      - Auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: User Register
+      parameters:
+      - description: Register request
+        in: body
+        name: registerReq
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterReqDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/auth.AuthResDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      summary: Register
+      tags:
+      - Auth
+  /posts:
+    post:
+      consumes:
+      - application/json
+      description: Create a post
+      parameters:
+      - description: Create Post Request
+        in: body
+        name: createPostReq
+        required: true
+        schema:
+          $ref: '#/definitions/post.CreatePostReqDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/post.PostResDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Create a post
+      tags:
+      - Post
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

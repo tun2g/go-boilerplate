@@ -14,12 +14,18 @@ var _logger = logger.NewLogger("database")
 func GetMigrations() []*gormigrate.Migration {
 	return []*gormigrate.Migration{
 		{
-			ID: "20240526000001",
+			ID: "20240526000003",
 			Migrate: func(tx *gorm.DB) error {
-				return tx.AutoMigrate(&model.User{})
+				tx.AutoMigrate(&model.User{})
+				tx.AutoMigrate(&model.Post{})
+				tx.AutoMigrate(&model.Comment{})
+				return nil
 			},
 			Rollback: func(tx *gorm.DB) error {
-				return tx.Migrator().DropTable(&model.User{})
+				tx.Migrator().DropTable(&model.User{})
+				tx.Migrator().DropTable(&model.Post{})
+				tx.Migrator().DropTable(&model.Comment{})
+				return nil
 			},
 		},
 	}
