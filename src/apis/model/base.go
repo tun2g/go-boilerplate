@@ -8,7 +8,7 @@ import (
 )
 
 type BaseModel struct {
-	ID        string         `gorm:"type:varchar(36);primary_key;" json:"id"`
+	Id        string         `gorm:"type:varchar(36);primary_key;" json:"id"`
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `sql:"index" json:"deletedAt"`
@@ -16,6 +16,6 @@ type BaseModel struct {
 
 func (base *BaseModel) BeforeCreate(tx *gorm.DB) error {
 	uuid := uuid.New().String()
-	base.ID = uuid
+	base.Id = uuid
 	return nil
 }

@@ -33,7 +33,7 @@ func (repo usersRepository) FindUserByEmail(email string) (*model.User, error) {
 	return &user, nil
 }
 
-func (repo usersRepository) FindUserByID(id int) (*model.User, error) {
+func (repo usersRepository) FindUserByID(id string) (*model.User, error) {
 	var user model.User
 	err := repo.storage.Where("id = ?", id).First(&user).Error
 	

@@ -2,12 +2,13 @@ package dto
 
 import (
 	"fist-app/src/shared/jwt"
+	"time"
 )
 
 type CurrentUser struct {
 	FullName string `json:"fullName,omitempty"`
 	Email    string `json:"email"`
-	ID       string `json:"id"`
+	Id       string `json:"id"`
 	Role     string `json:"role"`
 }
 
@@ -16,9 +17,16 @@ func NewCurrentUser(payload *jwt.JwtPayload) *CurrentUser {
 		return &CurrentUser{
 			FullName: payload.FullName,
 			Email:    payload.Email,
-			ID:       payload.UserId,
+			Id:       payload.UserId,
 			Role:     payload.Role,
 		}
 	}
 	return nil
+}
+
+type AuditableResDto struct {
+	Id        string    `json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	DeletedAt time.Time `json:"deletedAt"`
 }

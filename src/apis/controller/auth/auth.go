@@ -44,7 +44,7 @@ func (handler *AuthController) Login(ctx *httpContext.CustomContext) {
 	}
 
 	userRes := dto.UserResDto{
-		ID:       user.ID,
+		ID:       user.Id,
 		Email:    user.Email,
 		FullName: user.FullName,
 	}
@@ -77,7 +77,7 @@ func (handler *AuthController) Register(ctx *httpContext.CustomContext) {
 	}
 
 	userRes := dto.UserResDto{
-		ID:       user.ID,
+		ID:       user.Id,
 		Email:    user.Email,
 		FullName: user.FullName,
 	}

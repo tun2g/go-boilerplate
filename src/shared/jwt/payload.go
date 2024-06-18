@@ -21,7 +21,7 @@ func NewJwtPayload(user *model.User, expirationTime time.Duration) *JwtPayload {
 	tokenId := uuid.New().String()
 	return &JwtPayload{
 		TokenId:   tokenId,
-		UserId:    user.ID,
+		UserId:    user.Id,
 		Email:     user.Email,
 		Role:      user.Role,
 		FullName:  user.FullName,

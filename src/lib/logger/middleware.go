@@ -34,7 +34,7 @@ func RequestLoggerMiddleware(ctx *httpContext.CustomContext) {
 
 	if(user != nil){
 		context := logger.WithFields(logrus.Fields{
-			"user_id": user.ID,
+			"user_id": user.Id,
 			"email": user.Email,
 			"role": user.Role,
 			"full_name": user.FullName,
@@ -73,7 +73,7 @@ func ResponseLoggerMiddleware(ctx *httpContext.CustomContext) {
 
 	if(user != nil){
 		context := logger.WithFields(logrus.Fields{
-			"user_id": user.ID,
+			"user_id": user.Id,
 			"email": user.Email,
 			"role": user.Role,
 			"full_name": user.FullName,

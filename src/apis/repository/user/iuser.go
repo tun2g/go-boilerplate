@@ -7,7 +7,7 @@ import (
 
 type UserRepository interface {
 	FindUserByEmail(email string) (*model.User, error)
-	FindUserByID(ID int) (*model.User, error)
+	FindUserByID(id string) (*model.User, error)
 	StoreUser(user model.User) (*model.User, error)
 	GetAll(dto *pageDto.PageOptionsDto) (*[]model.User, error)
 	CountByPageDto(dto *pageDto.PageOptionsDto) (int, error)
