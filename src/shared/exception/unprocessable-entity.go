@@ -26,7 +26,6 @@ func manufactureValidationException(err error) []ErrorDetail{
 			}
 		} else {
 			validationErrors = append(validationErrors, ErrorDetail{
-				Field: "",
 				Issue: err.Error(),
 			})
 		}

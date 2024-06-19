@@ -15,10 +15,10 @@ type usersRepository struct {
 }
 
 func NewUsersRepository(db *gorm.DB) UserRepository {
-	return usersRepository{storage: db}
+	return &usersRepository{storage: db}
 }
 
-func (repo usersRepository) FindUserByEmail(email string) (*model.User, error) {
+func (repo *usersRepository) FindUserByEmail(email string) (*model.User, error) {
 	var user model.User
 	err := repo.storage.Where("email = ?", email).First(&user).Error
 
@@ -33,7 +33,7 @@ func (repo usersRepository) FindUserByEmail(email string) (*model.User, error) {
 	return &user, nil
 }
 
-func (repo usersRepository) FindUserByID(id string) (*model.User, error) {
+func (repo *usersRepository) FindUserByID(id string) (*model.User, error) {
 	var user model.User
 	err := repo.storage.Where("id = ?", id).First(&user).Error
 	
@@ -43,12 +43,12 @@ func (repo usersRepository) FindUserByID(id string) (*model.User, error) {
 	return &user, nil
 }
 
-func (repo usersRepository) StoreUser(user model.User) (*model.User, error) {
+func (repo *usersRepository) StoreUser(user model.User) (*model.User, error) {
 	err := repo.storage.Create(&user).Error
 	return &user, err
 }
 
-func (repo usersRepository) GetAll(dto *pageDto.PageOptionsDto) (*[]model.User, error){
+func (repo *usersRepository) GetAll(dto *pageDto.PageOptionsDto) (*[]model.User, error){
 	var users []model.User
 	query :=  repo.storage.
 		Offset(*dto.Offset).
@@ -72,7 +72,7 @@ func (repo usersRepository) GetAll(dto *pageDto.PageOptionsDto) (*[]model.User, 
 	return &users, nil
 }
 
-func (repo usersRepository) CountByPageDto(dto *dto.PageOptionsDto) (int, error){
+func (repo *usersRepository) CountByPageDto(dto *dto.PageOptionsDto) (int, error){
 	var count int64
 	query := repo.storage.Model(&model.User{})
 

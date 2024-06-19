@@ -76,3 +76,72 @@ func (handler *PostController) GetPostsByUser(ctx *httpContext.CustomContext){
 
 	ctx.JSON(http.StatusOK, data)	
 }
+
+func (handler *PostController) GetPostById(ctx *httpContext.CustomContext){
+	postId := ctx.Param("id")
+	user := ctx.GetUser()
+
+	post, err := handler.postService.GetPost(user.Id, postId)
+
+	if err != nil{
+		ctx.Error(err)
+		return
+	}
+
+	postRes := postDto.PostResDto{
+		AuditableResDto: dto.AuditableResDto{
+			Id:        post.Id,
+			CreatedAt: post.CreatedAt,
+			DeletedAt: post.DeletedAt.Time,
+			UpdatedAt: post.UpdatedAt,
+		},
+		Title:       post.Title,
+		Description: post.Description,
+		UserId:      post.UserId,
+	}
+
+	ctx.JSON(http.StatusOK, postRes)
+}
+
+func (handler *PostController) UpdatePost(ctx *httpContext.CustomContext){
+	postId := ctx.Param("id")
+	user := ctx.GetUser()
+	var reqDto postDto.UpdatePostReqDto
+	if err := ctx.ShouldBindJSON(&reqDto); err != nil {
+		ctx.Error(exception.NewUnprocessableEntityException(ctx.GetRequestId(), err))
+		return
+	}
+
+	post, err := handler.postService.UpdatePost(user.Id, postId, &reqDto)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	postRes := postDto.PostResDto{
+		AuditableResDto: dto.AuditableResDto{
+			Id:        post.Id,
+			CreatedAt: post.CreatedAt,
+			DeletedAt: post.DeletedAt.Time,
+			UpdatedAt: post.UpdatedAt,
+		},
+		Title:       post.Title,
+		Description: post.Description,
+		UserId:      post.UserId,
+	}
+
+	ctx.JSON(http.StatusOK, postRes)
+}
+
+func (handler *PostController) DeletePost(ctx *httpContext.CustomContext){
+	postId := ctx.Param("id")
+	user := ctx.GetUser()
+
+	err := handler.postService.SoftDeletePost(user.Id, postId);
+	if err != nil {
+		ctx.Error(err)
+		return
+	} 
+
+	ctx.JSON(200, true)
+}

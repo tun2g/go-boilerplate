@@ -104,6 +104,17 @@ definitions:
       userId:
         type: string
     type: object
+  post.UpdatePostReqDto:
+    properties:
+      description:
+        minLength: 8
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
 host: localhost:3000
 info:
   contact:
@@ -227,10 +238,6 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/exception.HttpError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/exception.HttpError'
       security:
       - BearerAuth: []
       summary: Get posts by user ID with pagination and ordering
@@ -266,13 +273,112 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/exception.HttpError'
-        "500":
-          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Create a post
+      tags:
+      - Post
+  /posts/{id}:
+    delete:
+      description: Delete post.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: boolean
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/exception.HttpError'
       security:
       - BearerAuth: []
-      summary: Create a post
+      summary: Delete post by ID
+      tags:
+      - Post
+    get:
+      description: Retrieves post.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.PostResDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Get post by ID
+      tags:
+      - Post
+    patch:
+      description: Update post.
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Post Request
+        in: body
+        name: updatePostReq
+        required: true
+        schema:
+          $ref: '#/definitions/post.UpdatePostReqDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.PostResDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/exception.HttpError'
+      security:
+      - BearerAuth: []
+      summary: Update post by ID
       tags:
       - Post
 securityDefinitions:
