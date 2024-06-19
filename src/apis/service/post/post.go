@@ -21,33 +21,33 @@ func NewPostService(postRepository repository.PostRepository) *postService {
 
 func (srv *postService) CreateNewPost(
 	ctx *httpContext.CustomContext,
-	userId string, 
+	userId string,
 	dto postDto.CreatePostReqDto,
-) (*model.Post, error){
+) (*model.Post, error) {
 	var err error
 	post, err := srv.postRepository.StorePost(&model.Post{
-		UserId: userId,
-		Title: dto.Title,
+		UserId:      userId,
+		Title:       dto.Title,
 		Description: dto.Description,
 	})
-	return post, err;
+	return post, err
 }
 
 func (srv *postService) GetPostsByUserId(
 	ctx *httpContext.CustomContext,
 	userId string,
 	dto *pageDto.PageOptionsDto,
-)(*pageDto.PageDto, error){
+) (*pageDto.PageDto, error) {
 	posts, err := srv.postRepository.GetPostsByUserIdAndPageDto(userId, dto)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
 
 	count, err := srv.postRepository.CountByUserIdAndPageDto(userId, dto)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
-	
+
 	entities := make([]interface{}, len(*posts))
 	for i, post := range *posts {
 		entities[i] = post
@@ -58,19 +58,17 @@ func (srv *postService) GetPostsByUserId(
 	return pageRes, nil
 }
 
-func (srv *postService) SoftDeletePost(userId string, postId string) (error){
+func (srv *postService) SoftDeletePost(userId string, postId string) error {
 	err := srv.postRepository.SoftDeletePost(userId, postId)
 	return err
 }
 
-
-func (srv *postService) UpdatePost(userId string, postId string, updatedPost *postDto.UpdatePostReqDto) (*model.Post, error){
+func (srv *postService) UpdatePost(userId string, postId string, updatedPost *postDto.UpdatePostReqDto) (*model.Post, error) {
 	post, err := srv.postRepository.UpdatePost(userId, postId, updatedPost)
 	return post, err
 }
 
-
-func (srv *postService) GetPost(userId string, postId string) (*model.Post, error){
+func (srv *postService) GetPost(userId string, postId string) (*model.Post, error) {
 	post, err := srv.postRepository.GetPost(userId, postId)
 	return post, err
 }

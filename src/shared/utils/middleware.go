@@ -26,8 +26,7 @@ func CombineMiddlewares(middlewares ...gin.HandlerFunc) gin.HandlerFunc {
 	}
 }
 
-
-func UUIDParamsMiddleware(fields ...string) func(ctx *httpContext.CustomContext){
+func UUIDParamsMiddleware(fields ...string) func(ctx *httpContext.CustomContext) {
 	if len(fields) == 0 {
 		fields = []string{"id"}
 	}
@@ -35,13 +34,12 @@ func UUIDParamsMiddleware(fields ...string) func(ctx *httpContext.CustomContext)
 	return func(ctx *httpContext.CustomContext) {
 		var wg sync.WaitGroup
 		errCh := make(chan error, 1) // Buffer of 1 to ensure we can send an error without blocking
-	
+
 		for _, field := range fields {
 			wg.Add(1)
 			go func(field string) {
 				defer wg.Done()
 				id := ctx.Param(field)
-				_logger.Println(id)
 				if _, err := uuid.Parse(id); err != nil {
 					select {
 					case errCh <- errors.New("Invalid UUID Params for field: " + field):
@@ -55,7 +53,7 @@ func UUIDParamsMiddleware(fields ...string) func(ctx *httpContext.CustomContext)
 		close(errCh)
 
 		if err := <-errCh; err != nil {
-			exception.ThrowUnprocessableEntityException(ctx, err);
+			exception.ThrowUnprocessableEntityException(ctx, err)
 			return
 		}
 

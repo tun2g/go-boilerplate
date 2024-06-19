@@ -157,17 +157,17 @@ func (srv *authService) RefreshToken(ctx *httpContext.CustomContext) (*auth.Toke
 	return &tokens, nil
 }
 
-func (srv *authService) GetUsers(ctx *httpContext.CustomContext, dto *pageDto.PageOptionsDto) (*pageDto.PageDto, error){
+func (srv *authService) GetUsers(ctx *httpContext.CustomContext, dto *pageDto.PageOptionsDto) (*pageDto.PageDto, error) {
 	users, err := srv.userRepository.GetAll(dto)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
 
 	count, err := srv.userRepository.CountByPageDto(dto)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
-	
+
 	entities := make([]interface{}, len(*users))
 	for i, user := range *users {
 		entities[i] = user
