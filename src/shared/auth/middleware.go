@@ -8,7 +8,6 @@ import (
 	"fist-app/src/shared/jwt"
 	"fist-app/src/shared/utils"
 	"strings"
-	"fist-app/src/config"
 )
 
 func IsPublicRouteMiddleware() func(ctx *httpContext.CustomContext){
@@ -29,25 +28,18 @@ func TokenAuthMiddleware(jwtManager *jwt.JWTManager) func(ctx *httpContext.Custo
 			return
 		}
 		
-		if(config.AppConfiguration.GoEnv == "production"){
-			fields := strings.Fields(authorizationHeader)
-			if len(fields) < 2 && isPublic == false{
-				exception.ThrowUnauthorizedException(ctx)
-				return
-			}
-	
-			authorizationType := strings.ToLower(fields[0])
-			if authorizationType != authConstants.AuthorizationBearerKey && isPublic == false {
-				exception.ThrowUnauthorizedException(ctx)
-				return
-			}
-			accessToken = fields[1]
-
-		}else {
-			// PURPOSE: enable swagger authorization 
-			accessToken = strings.Fields(authorizationHeader)[0]
+		fields := strings.Fields(authorizationHeader)
+		if len(fields) < 2 && isPublic == false{
+			exception.ThrowUnauthorizedException(ctx)
+			return
 		}
 
+		authorizationType := strings.ToLower(fields[0])
+		if authorizationType != authConstants.AuthorizationBearerKey && isPublic == false {
+			exception.ThrowUnauthorizedException(ctx)
+			return
+		}
+		accessToken = fields[1]
 
 		payload, err := jwtManager.VerifyToken(accessToken)
 		if err != nil && isPublic == false{
